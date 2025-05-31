@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Share Your Journey</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="icon" href="{{ url_for('static', filename='images/WT Website logo.png') }}" type="image/png">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background-color: #f0f4f8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #555;
+    }
+    .input-field, .TextArea {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccd0d5;
+      border-radius: 5px;
+      background: #f9fafb;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-field{
+        margin-top: 15px;
+    }
+    .input-field:focus, .TextArea:focus {
+      border-color: #5c9ded;
+      box-shadow: 0 0 5px rgba(92,157,237,0.4);
+      outline: none;
+    }
+    .checkbox-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: #f1f5f9;
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid #e1e4e8;
+    }
+    .checkbox-list label {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #444;
+    }
+    .checkbox-list input {
+      margin-right: 8px;
+      transform: scale(1.2);
+      accent-color: #5c9ded;
+    }
+    .star-rating {
+      display: flex;
+      gap: 8px;
+    }
+    .star-rating i {
+      font-size: 24px;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .star-rating .selected {
+      color: #f5b50a;
+    }
+    #submitBtn {
+      grid-column: 1 / -1;
+      justify-self: center;
+      padding: 12px 30px;
+      font-size: 18px;
+      background: linear-gradient(90deg, #5c9ded, #3b6dc7);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    #submitBtn:hover {
+      transform: translateY(-2px);
+    }
+    #submitBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      form {
+        grid-template-columns: 1fr;
+      }
+      #submitBtn {
+        width: 100%;
+      }
+    }
+
+
+
+    /* 1. Make all inputs, textareas & file-pickers full-width */
+.input-field,
+.TextArea,
+input[type="file"],
+#sendCodeBtn {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 2. Tweak layout under 768px */
+@media (max-width: 768px) {
+  /* You already collapse the grid to one column, now ensure child divs stack */
+  .form-group > div {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  /* Ensure the Send Code button sits below the email field */
+  #sendCodeBtn {
+    margin-top: 8px;
+  }
+
+  /* Stack checkboxes vertically */
+  .checkbox-list {
+    flex-direction: column;
+  }
+
+  /* Center star rating */
+  .star-rating {
+    justify-content: center;
+  }
+
+  /* Make the submit button span */
+  #submitBtn {
+    width: 100%;
+  }
+}
+@media (max-width: 768px) {
+  /* very specific override for the star container */
+  .form-group.full-width > .star-rating {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Share Your Valuable Experience</h2>
+    <form id="review-form" action="/add_review" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="college">College Name</label>
+        <input type="text" id="college" name="college" class="input-field" required>
+      </div>
+      <div class="form-group">
+        <label for="reviewer_name">Your Full Name</label>
+        <input type="text" id="reviewer_name" name="reviewer_name" class="input-field" required>
+      </div>
+      <div class="form-group">
+  <label for="PRN">PRN/Unique ID</label>
+  <input
+    type="text"
+    id="PRN"
+    name="PRN"
+    class="input-field"
+    required
+    minlength="3"
+    maxlength="20"
+    title="Enter between 3 and 20 digits"
+    inputmode="numeric"
+  >
+</div>
+      <div class="form-group">
+  <label for="email">Email</label>
+  <div style="display:flex; align-items:flex-end; gap:8px;">
+    <input type="email"
+           id="email"
+           name="email"
+           class="input-field"
+           required>
+    <button type="button"
+            id="sendCodeBtn"
+            class="button-64"
+            style="padding:6px 12px; font-size:14px;">
+      Send Code
+    </button>
+  </div>
+</div>
+
+<div class="form-group full-width">
+  <label for="verification_code">Verification Code</label>
+  <input type="text"
+         id="verification_code"
+         name="verification_code"
+         class="input-field"
+         placeholder="Enter code"
+         required>
+</div>
+<!-- <script>
+  document.getElementById('sendCodeBtn').addEventListener('click', async () => {
+    const email = document.getElementById('email').value.trim();
+    if (!email) {
+      return Swal.fire('Oops','Please enter your email first','error');
+    }
+    // disable button while sending
+    const btn = document.getElementById('sendCodeBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+      const form = new FormData();
+      form.append('email', email);
+
+      const resp = await fetch('/send_verification', {
+        method: 'POST',
+        body: form,
+      });
+      const data = await resp.json();
+      if (data.ok) {
+        Swal.fire('Success', data.msg, 'success');
+      } else {
+        Swal.fire('Error', data.msg, 'error');
+      }
+    } catch (e) {
+      Swal.fire('Error', e.toString(), 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Code';
+    }
+  });
+</script> -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('sendCodeBtn');
+    const emailField = document.getElementById('email');
+
+    btn.addEventListener('click', async () => {
+      const email = emailField.value.trim();
+      if (!email) {
+        return Swal.fire('Oops', 'Please enter your email first', 'error');
+      }
+
+      // 1) disable immediately
+      btn.disabled = true;
+      btn.style.cursor = 'not-allowed';
+      btn.textContent = 'Please wait...';
+
+      try {
+        // 2) send request
+        const form = new FormData();
+        form.append('email', email);
+        const resp = await fetch('/send_verification', { method: 'POST', body: form });
+        const data = await resp.json();
+
+        if (data.ok) {
+          // 3) show alert, then update text
+            Swal.fire({
+            title: 'Success',
+            text: data.msg,
+            icon: 'success',
+            timer: 5000,             // auto-close after 5s
+            showConfirmButton: false,
+            timerProgressBar: true,
+            allowOutsideClick: false
+            }).then(() => {
+            btn.textContent = 'Code sent successfully!!';
+            });
+
+        } else {
+          Swal.fire('Error', data.msg, 'error');
+        }
+
+      } catch (err) {
+        Swal.fire('Error', err.toString(), 'error');
+      } finally {
+        // 4) re-enable after 15s
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.style.cursor = 'pointer';
+          btn.textContent = 'Send Code Again...';
+        }, 15000);
+      }
+    });
+  });
+</script>
+
+      <div class="form-group full-width">
+        <label for="image">ID Proof</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+      </div>
+      <div class="form-group full-width">
+        <label for="video">Upload Video</label>
+        <input type="file" id="video" name="video" accept="video/*">
+      </div>
+      <div class="form-group full-width">
+        <label>Facilities</label>
+        <div class="checkbox-list">
+          <label style="cursor: pointer;"><input type="checkbox" name="facilities[]" value="Wi-Fi"> Wi-Fi</label>
+          <label style="cursor: pointer;"><input type="checkbox" name="facilities[]" value="Filtered Water"> Filtered Water</label>
+          <label style="cursor: pointer;"><input type="checkbox" name="facilities[]" value="Library"> Library</label>
+          <label style="cursor: pointer;"><input type="checkbox" name="facilities[]" value="Gym"> Gym</label>
+          <label style="cursor: pointer;"><input type="checkbox" name="facilities[]" value="Cafeteria"> Cafeteria</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="academics">Academics</label>
+        <textarea class="TextArea" id="academics" name="academics" rows="2" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="placements">Placements</label>
+        <textarea class="TextArea" id="placements" name="placements" rows="2" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="campus_life">Campus Life</label>
+        <textarea class="TextArea" id="campus_life" name="campus_life" rows="2" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="infrastructure">Infrastructure</label>
+        <textarea class="TextArea" id="infrastructure" name="infrastructure" rows="2" required></textarea>
+      </div>
+      <div class="form-group full-width">
+        <label for="detailreview">Summary</label>
+        <textarea class="TextArea" id="detailreview" name="detailreview" rows="3" required></textarea>
+      </div>
+      <div class="form-group full-width">
+        <label for="image1">Image 1 & Caption</label>
+        <input type="file" id="image1" name="image1" accept="image/*" required>
+        <input type="text" id="caption1" name="caption1" class="input-field" placeholder="Caption" required>
+      </div>
+      <div class="form-group">
+        <label for="image2">Image 2 & Caption</label>
+        <input type="file" id="image2" name="image2" accept="image/*">
+        <input type="text" id="caption2" name="caption2" class="input-field" placeholder="Caption">
+      </div>
+      <div class="form-group">
+        <label for="image3">Image 3 & Caption</label>
+        <input type="file" id="image3" name="image3" accept="image/*">
+        <input type="text" id="caption3" name="caption3" class="input-field" placeholder="Caption">
+      </div>
+      <div class="form-group full-width">
+        <label for="overall_rating">Overall Rating</label>
+        <div class="star-rating">
+          <i class="fas fa-star" data-rating="1"></i>
+          <i class="fas fa-star" data-rating="2"></i>
+          <i class="fas fa-star" data-rating="3"></i>
+          <i class="fas fa-star" data-rating="4"></i>
+          <i class="fas fa-star" data-rating="5"></i>
+        </div>
+        <input type="hidden" name="overall_rating" id="overall_rating" value="0" required>
+        <span id="rating-text"></span>
+      </div>
+      <button id="submitBtn" class="full-width">Submit Review</button>
+    </form>
+  </div>
+  <script>
+    // Star rating logic
+    const stars = document.querySelectorAll('.star-rating i');
+    const ratingInput = document.getElementById('overall_rating');
+    const ratingText = document.getElementById('rating-text');
+    const ratingMap = {1:'Poor :(',2:'Below Avg',3:'Average ✨',4:'Good :)',5:'Excellent 💖'};
+    stars.forEach(star => star.addEventListener('click', () => {
+      const val = parseInt(star.dataset.rating);
+      ratingInput.value = val;
+      ratingText.textContent = ratingMap[val];
+      stars.forEach(s => s.classList.toggle('selected', parseInt(s.dataset.rating) <= val));
+    }));
+
+    // Only disable button after successful validation & submit
+    document.getElementById('review-form').addEventListener('submit', function(e) {
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+      btn.textContent = 'Submitting...';
+    });
+  </script>
+</body>
+</html>

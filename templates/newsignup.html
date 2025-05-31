@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Signup</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/WT Website logo.png') }}" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+   <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  </head>
+  <style>
+    .signup-btn {
+justify-content: center;
+flex-direction: row;
+display: flex;
+height: 50px;
+background-color: rgba(0, 255, 255, 0.164);
+justify-content: center;
+align-items: center;
+width: 250px;
+padding: 10px;
+box-shadow: 3px 3px 3px rgb(170, 170, 170);
+border-radius: 15px;
+margin-top: 25px;
+margin-left: 25px;
+margin-bottom: 25px;
+border: 3px solid black;
+}
+.btn-text {
+justify-content: center;
+padding: 10px;
+font-family: 'Poppins', sans-serif;
+color: rgb(243, 233, 233);
+}
+</style>
+<body>
+  <div class="bg-img">
+    <div class="content">
+      <header>Registration Form</header>
+      <form action="/register" method="POST" onsubmit="return validateForm()">
+        <div class="field">
+          <span class="fa fa-user"></span>
+          <input type="text" id="username" name="username" required placeholder="Username" oninput="validateUsername()">
+        </div>
+        <div id="usernameError" style="color:red; font-size: 14px; margin-top: 4px;"></div>
+      
+        <div class="field space">
+          <span class="fa fa-lock"></span>
+          <input type="password" id="password" name="password" class="pass-key" required placeholder="Password">
+          <span class="show">SHOW</span>
+        </div>
+        <div id="passwordError" style="color:red; font-size: 14px; margin-top: 4px;"></div>
+      
+        <div class="field space">
+          <span class="fa fa-envelope"></span>
+          <input type="email" name="email" class="pass-key" required placeholder="example@gmail.com">
+        </div>
+      
+        <br>
+        <div class="field">
+          <input type="submit" id="submitBtn" value="Create">
+        </div>        
+      </form>      
+
+      <span>
+        <a href="google/" class="signup-btn" style="text-decoration:none;">
+          <img id="google" src="static/icons8-google-logo-48.png"
+            alt="Google"
+            style="width:30px;height:30px;">
+          <span class="btn-text">
+            Signup with Google
+          </span>
+        </a> 
+      </span>
+
+      <div class="signup">Already have an account?
+        <a href="/login">Login</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pass_field = document.getElementById('password');
+    const showBtn = document.querySelector('.show');
+    const errorDiv = document.getElementById('passwordError');
+    const usernameField = document.getElementById('username');
+    const usernameError = document.getElementById('usernameError');
+  
+    // Toggle show/hide password
+    showBtn.addEventListener('click', function () {
+      if (pass_field.type === "password") {
+        pass_field.type = "text";
+        showBtn.textContent = "HIDE";
+        showBtn.style.color = "#3498db";
+      } else {
+        pass_field.type = "password";
+        showBtn.textContent = "SHOW";
+        showBtn.style.color = "#222";
+      }
+    });
+  
+    pass_field.addEventListener('input', validatePassword);
+    usernameField.addEventListener('input', validateUsername);
+  
+    function validateUsername() {
+      const username = usernameField.value;
+      if (username.length < 3 || !/^[a-zA-Z0-9_]+$/.test(username)) {
+        usernameError.innerHTML = "• Username must be at least 3 characters and contain only letters, numbers, or underscores.";
+        return false;
+      } else {
+        usernameError.innerHTML = "";
+        return true;
+      }
+    }
+  
+    function validatePassword() {
+      const password = pass_field.value;
+      let messages = [];
+  
+      if (password.length < 6) {
+        messages.push("• At least 6 characters");
+      }
+      if (!/[A-Z]/.test(password)) {
+        messages.push("• At least one uppercase letter");
+      }
+      if (!/[0-9]/.test(password)) {
+        messages.push("• At least one number");
+      }
+      if (!/[!@#$%^&*(),.?\":{}|<>]/.test(password)) {
+        messages.push("• At least one special character");
+      }
+  
+      if (messages.length > 0) {
+        errorDiv.innerHTML = `<span style="color:red">Password must have:<br>${messages.join("<br>")}</span>`;
+        return false;
+      } else {
+        errorDiv.innerHTML = "";
+        return true;
+      }
+    }
+  
+    function validateForm() {
+      const isUsernameValid = validateUsername();
+      const isPasswordValid = validatePassword();
+    
+      if (!isUsernameValid || !isPasswordValid) {
+        alert("Please re-check all the validations!");
+        return false; // Prevent form from submitting
+      }
+    
+      // Disable button and change its text
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.value = "Submitting...";
+    
+      return true; // Allow form to submit
+    }
+    
+  </script>
+  
+  
+</body>
+
+</html>

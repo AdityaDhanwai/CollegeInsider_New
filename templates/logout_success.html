@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logging Out...</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/WT Website logo.png') }}" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <script>
+        Swal.fire({
+            title: 'Goodbye!',
+            text: 'Logged out successfully',
+            icon: 'info',
+            timer: 2000,
+            showConfirmButton: true,
+            timerProgressBar: true,
+            allowOutsideClick: false
+        }).then(() => {
+            window.location.href = '/';
+        });
+    </script>
+</body>
+</html>
