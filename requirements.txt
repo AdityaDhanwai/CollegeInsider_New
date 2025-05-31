@@ -1,0 +1,7 @@
+Flask
+pymongo
+werkzeug
+authlib
+pyttsx3
+requests
+openai
